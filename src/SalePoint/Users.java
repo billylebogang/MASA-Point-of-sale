@@ -35,5 +35,5 @@ public class Users { //for making users
     public String getUserType(){return this.userType;}
     
     
-    
+    public String toString(){return this.username + this.password + this.userType;}
 }
