@@ -312,8 +312,34 @@ public class captureStock extends javax.swing.JFrame {
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
         // TODO add your handling code here:
+        String cst = txtCost.getText().toString();
+        String date = txtExpiryDate.getText().toString();
+        String eReturn = txtExpectedReturn.getText().toString();
+        String code = txtProductCode.getText().toString();
+        String name = txtProductName.getText().toString();
+        String quan = txtQuantity.getText().toString();
+        String prce = txtUnitPrice.getText().toString();
         
-        Product product1 = new Product()
+        double cost = Double.parseDouble(cst);
+        double profit = Double.parseDouble(eReturn); // the expected return
+        int quantity = Integer.parseInt(quan);
+        double price = Double.parseDouble(prce);
+        
+        
+        
+        Product product1 = new Product(code, name,date,quantity,cost, price,profit);
+        MasaDBClass dbObject = new MasaDBClass();
+        
+        if(dbObject.addProduct(product1)){
+            System.out.println("Product added successfully");
+        }
+        else{
+            System.out.println("there was a problem");
+        }
+        
+        System.out.println(product1.toString());
+        
+                
     }//GEN-LAST:event_addBtnActionPerformed
 
     /**
