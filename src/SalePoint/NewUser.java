@@ -159,16 +159,16 @@ public class NewUser extends javax.swing.JFrame {
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
         // TODO add your handling code here:
         
-        char[] password = passwordField.getPassword();
+        char[] password = passwordField.getPassword(); //getting password fields
         char[] password2 = confirmPassword.getPassword();
         
-        String pass = password.toString();
+        String pass = password.toString(); //converting the fields to string
         String pass2 = password2.toString();
       
-       
+        Users user1 = new Users();
        
         if( txtUsername.getText() != ""){ //if successfull add the object to the database
-            Users user1 = new Users();
+           
             user1.setUsername(txtUsername.getText());
             user1.setPassword(pass);
             
@@ -185,6 +185,11 @@ public class NewUser extends javax.swing.JFrame {
             showMessageDialog(null,"Something is wrong");
             
         }
+        
+        //calling the db method to add to the database
+        MasaDBClass userAdding = new MasaDBClass(); //pass the paramters
+        userAdding.addUser(user1);
+        
         
         
     }//GEN-LAST:event_addBtnActionPerformed

@@ -138,7 +138,19 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_clearBtnActionPerformed
 
     private void LoginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginBtnActionPerformed
+
         // TODO add your handling code here:
+        MasaDBClass auth = new MasaDBClass(); //creating the db object
+        String inputUsername = txtUsername.getText().toString();
+        String inputPassword = txtPassword.getPassword().toString();
+        
+        if(auth.authenticateUser(inputUsername, inputPassword)){
+            Main ma = new Main(); // creating a user intserface
+            ma.show();
+            dispose();
+        }
+        
+        
     }//GEN-LAST:event_LoginBtnActionPerformed
 
     /**
