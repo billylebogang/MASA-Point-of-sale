@@ -60,4 +60,10 @@ public class SellingProduct { //class for a product to sell, it works with the r
     }
     
     
+    public String toString(){
+        return this.productCode+ " |" +this.productName+" |" + this.productPrice+" |" +this.quantity;
+    
+    }
+    
+    
 }

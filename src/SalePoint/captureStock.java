@@ -327,10 +327,10 @@ public class captureStock extends javax.swing.JFrame {
         
         
         
-        Product product1 = new Product(code, name,date,quantity,cost, price,profit);
-        MasaDBClass dbObject = new MasaDBClass();
+        Product product1 = new Product(code, name,date,quantity,cost, price,profit); // creating a product object from 
+        MasaDBClass dbObject = new MasaDBClass(); //creating a db object
         
-        if(dbObject.addProduct(product1)){
+        if(dbObject.addProduct(product1)){ //passing the product object to a db funtion that adds to database
             System.out.println("Product added successfully");
         }
         else{
