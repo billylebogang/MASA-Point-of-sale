@@ -7,6 +7,7 @@ package SalePoint;
 import java.sql.SQLException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.sql.*;
 /**
  *
  * @author lb19000961
@@ -32,12 +33,18 @@ public class MasaDBClass {
 
      //constructor to initialise variables
     MasaDBClass(){
-        this.db_url = ""; //initialize if my url
-        this.JDBC_DRIVER = "org.h2.Driver"; // my driver
-        this.USER = ""; //sa
-        this.PASS = ""; //Biust@2021
+        this.db_url = "jdbc:mysql://localhost:3307/masadb1"; //initialize if my url
+        this.JDBC_DRIVER = "com.mysql.cj.jdbc.Driver"; // my driver
+        this.USER = "root"; //root
+        this.PASS = "Biust@2021"; //Biust@2021
 
-        //attempt to connect to database whenever constructor is called
+       
+
+    }
+    
+    public  boolean connectDB(){
+            boolean connectionCheck  = false;
+         //attempt to connect to database whenever constructor is called
         System.out.println("Establishing Connection to database...");
 
         try{
@@ -46,20 +53,29 @@ public class MasaDBClass {
 
             //open a connection using user credentials and the db url
             conn = DriverManager.getConnection(db_url, USER, PASS);
+            
+            connectionCheck  = true;
 
         }catch(ClassNotFoundException cnf){
             //if class isn't found, show exception details
             System.out.println(cnf.getMessage());
             cnf.printStackTrace();
+            
+            connectionCheck  = false;
         }catch(SQLException se){
             //if sql connection error occurs, show exception details
             System.out.println(se.getMessage());
             se.printStackTrace();
+            
+            connectionCheck = false;
         }finally {
             System.out.println("Database Connection has been Established.");
+            connectionCheck = true;
         }
-
+        return connectionCheck;
     }
+    
+    
 
     //method to get all product from db, returns ArrayList of objects of product
     public ArrayList<Product> getProducts() {
@@ -105,6 +121,57 @@ public class MasaDBClass {
         //return cars list to caller, may be empty if error occurred
         return productsList;
     }
+    
+    
+    
+    
+    // tthis meethod will return product for selling from the stock table
+     public SellingProduct getSellProduct(String inputCode) {
+
+        //create array list to store car objects from db
+        SellingProduct sellProduct= new SellingProduct();
+
+        try {
+
+            //Execute a query
+            query =  "select productcode,productName,unitPrice from stock where productCode = '?'";
+            ps = conn.prepareStatement(query);
+            
+             ps.setString(1,inputCode);
+            rs = ps.executeQuery();
+            int quantity=0;
+            
+            
+            //loop through and get results store in variables to later creata na arraylist
+            while (rs.next()){
+                String code = rs.getString("productCode");
+                String name = rs.getString("productName");
+                double price = rs.getInt("unitPrice");
+  
+                //add a new seling product object with the values above
+                sellProduct = new SellingProduct(code, name ,price,quantity);
+            }
+
+            //Close up
+            ps.close();
+            conn.close();
+
+        } catch(SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+
+        } catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+
+        }
+
+        //return cars list to caller, may be empty if error occurred
+        return sellProduct;
+    }
+     
+     
+     
 
     //method that will be use to get product details by searching for it by code
     public Product getProductsQuantity(String code) {
