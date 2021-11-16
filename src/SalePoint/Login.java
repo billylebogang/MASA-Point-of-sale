@@ -4,6 +4,8 @@
  */
 package SalePoint;
 
+import SalePoint.MasaDBClass;
+
 /**
  *
  * @author lb19000961
@@ -143,6 +145,7 @@ public class Login extends javax.swing.JFrame {
 
         // TODO add your handling code here:
         MasaDBClass auth = new MasaDBClass(); //creating the db object
+        auth.connectDB();
         String inputUsername = txtUsername.getText().toString();
         String inputPassword = txtPassword.getPassword().toString();
         

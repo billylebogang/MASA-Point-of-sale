@@ -1,5 +1,7 @@
 
 package SalePoint;
+import SalePoint.MasaDBClass;
+import SalePoint.Users;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 /**

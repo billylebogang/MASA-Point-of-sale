@@ -33,8 +33,8 @@ public class MasaDBClass {
 
      //constructor to initialise variables
     MasaDBClass(){
-        this.db_url = "jdbc:mysql://localhost:3307/masadb1"; //initialize if my url
-        this.JDBC_DRIVER = "com.mysql.cj.jdbc.Driver"; // my driver
+        this.db_url = "jdbc:mysql://localhost:3308/masadb1?zeroDateTimeBehavior=CONVERT_TO_NULL"; //initialize if my url
+        //this.JDBC_DRIVER = ; // my driver
         this.USER = "root"; //root
         this.PASS = "Biust@2021"; //Biust@2021
 
@@ -49,7 +49,7 @@ public class MasaDBClass {
 
         try{
             //register the driver
-            Class.forName(JDBC_DRIVER);
+            Class.forName("com.mysql.cj.jdbc.Driver");
 
             //open a connection using user credentials and the db url
             conn = DriverManager.getConnection(db_url, USER, PASS);
@@ -86,7 +86,7 @@ public class MasaDBClass {
         try {
 
             //Execute a query
-            query =  "select * from stock order by code asc";
+            query =  "select * from stock order by productCode asc";
             ps = conn.prepareStatement(query);
             rs = ps.executeQuery();
 
@@ -182,15 +182,15 @@ public class MasaDBClass {
         try {
 
             //Execute a query
-            query =  "select * from stock where code = '?'";
+            query =  "select * from stock where productCode = '?'";
             ps = conn.prepareStatement(query);
             ps.setString(1,code);
             rs = ps.executeQuery();
 
             //if result is returned, if not, do nothing...empty product object will be returned at the end
             if(rs.next()){
-                prod.setProductCode(rs.getString("code") );
-                prod.setProductName(rs.getString("name") );
+                prod.setProductCode(rs.getString("productCode") );
+                prod.setProductName(rs.getString("productName") );
                 prod.setExpiryDate(rs.getString("expiryDate"));
                 prod.setStockQuantity(rs.getInt("quantity"));
                 prod.setProductCost(rs.getDouble("cost"));
@@ -224,7 +224,7 @@ public class MasaDBClass {
             //Execute a query
             
             // create an query statement with blanks in the order: code, name, expirydate, quantity, cost, price and expected return
-            query =  "Insert into stock (productCode, productName, expiryDate, quantity, cost, unitPrice, expectedReturn) values (?,?,?,?,?,?,?)";
+            query =  "Insert into stock (productCode, productName, expiryDate, quantity, unitPrice, cost, expectedReturn) values (?,?,?,?,?,?,?)";
 
             //insert missing values in their positions, using a prepared statement
             ps = conn.prepareStatement(query);
@@ -260,7 +260,7 @@ public class MasaDBClass {
             //Execute a query
             
            //my query command to iserto into the user table
-            query =  "Insert into users(username, password, userType) values (?,?,?)";
+            query =  "Insert into user(username, password, userType) values (?,?,?)";
 
             //insert missing values in their positions, using a prepared statement
             ps = conn.prepareStatement(query);
@@ -292,7 +292,7 @@ public class MasaDBClass {
         
         try {
             //check password of matching user
-            query =  "select password from users where username=?";
+            query =  "select password from user where username=?";
             ps = conn.prepareStatement(query);
 
             //insert missing values
@@ -333,6 +333,39 @@ public class MasaDBClass {
         }
 
         return auth;
+    }
+    
+    public boolean deleteStock(String productCode){
+        boolean check = false;
+        
+         try {
+
+            //Execute a query
+            query =  "delete from stock where productCode = ?";
+            ps = conn.prepareStatement(query);
+            ps.setString(1,productCode);
+            rs = ps.executeQuery();
+
+       
+            //Closing connection
+            ps.close();
+            conn.close();
+            check = true;
+
+        } catch(SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+           
+        } catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+
+        }
+
+
+
+
+        return check;
     }
 }
     
