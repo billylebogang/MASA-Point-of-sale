@@ -147,13 +147,19 @@ public class Login extends javax.swing.JFrame {
         MasaDBClass auth = new MasaDBClass(); //creating the db object
         auth.connectDB();
         String inputUsername = txtUsername.getText().toString();
-        String inputPassword = txtPassword.getPassword().toString();
+        char[] inputPassword = txtPassword.getPassword();
+        System.out.println(inputPassword.toString());
         
-        if(auth.authenticateUser(inputUsername, inputPassword)){
-            Main ma = new Main(); // creating a user intserface
-            ma.show();
-            dispose();
-        }
+//        if(auth.authenticateUser(inputUsername, inputPassword.toString())){
+//            
+//            System.out.println("the auth wa succefull");
+////            Main ma = new Main(); // creating a user intserface
+////            ma.show();
+////            dispose();
+//        }
+//        else{
+//            System.out.println("the was a problem check ur stuff");
+//        }
         
         
         

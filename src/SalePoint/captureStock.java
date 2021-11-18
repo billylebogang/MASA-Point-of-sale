@@ -33,6 +33,7 @@ public class captureStock extends javax.swing.JFrame {
 
         label1 = new java.awt.Label();
         jFormattedTextField1 = new javax.swing.JFormattedTextField();
+        jDialog1 = new javax.swing.JDialog();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -64,6 +65,17 @@ public class captureStock extends javax.swing.JFrame {
         label1.setText("label1");
 
         jFormattedTextField1.setText("jFormattedTextField1");
+
+        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
+        jDialog1.getContentPane().setLayout(jDialog1Layout);
+        jDialog1Layout.setHorizontalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jDialog1Layout.setVerticalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -241,22 +253,21 @@ public class captureStock extends javax.swing.JFrame {
                     .addComponent(clearBtn))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(57, 57, 57)
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(67, 67, 67)
-                                .addComponent(jLabel11)
-                                .addGap(26, 26, 26)
-                                .addComponent(productLst, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(57, 57, 57)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(47, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(158, 158, 158)
                         .addComponent(checkStockBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(removeBtn)
-                        .addGap(81, 81, 81))))
+                        .addGap(81, 81, 81))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(67, 67, 67)
+                        .addComponent(jLabel11)
+                        .addGap(26, 26, 26)
+                        .addComponent(productLst, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -352,9 +363,7 @@ public class captureStock extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtProductCodeActionPerformed
 
-    private void clearBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearBtnActionPerformed
-        // TODO add your handling code here:
-        
+    public void clear(){
         txtCost.setText("");
         txtExpiryDate.setText("");
         txtExpectedReturn.setText("");
@@ -364,6 +373,23 @@ public class captureStock extends javax.swing.JFrame {
         txtUnitPrice.setText("");
         txtQuantity.setText("");
         txtProductCode.grabFocus();
+    
+    }
+    private void clearBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearBtnActionPerformed
+        // TODO add your handling code here:
+        
+//        txtCost.setText("");
+//        txtExpiryDate.setText("");
+//        txtExpectedReturn.setText("");
+//        txtProductCode.setText("");
+//        txtProductName.setText("");
+//        txtQuantity.setText("");
+//        txtUnitPrice.setText("");
+//        txtQuantity.setText("");
+//        txtProductCode.grabFocus();
+            clear();
+
+
         
     }//GEN-LAST:event_clearBtnActionPerformed
 
@@ -390,6 +416,8 @@ public class captureStock extends javax.swing.JFrame {
         
         if(dbObject.addProduct(product1)){ //passing the product object to a db funtion that adds to database
             System.out.println("Product added successfully");
+            //set notification here foe product added success
+            clear();
         }
         else{
             System.out.println("there was a problem");
@@ -467,6 +495,7 @@ public class captureStock extends javax.swing.JFrame {
     private javax.swing.JButton addBtn;
     private javax.swing.JButton checkStockBtn;
     private javax.swing.JButton clearBtn;
+    private javax.swing.JDialog jDialog1;
     private javax.swing.JFormattedTextField jFormattedTextField1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

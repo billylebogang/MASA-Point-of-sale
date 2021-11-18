@@ -33,10 +33,10 @@ public class MasaDBClass {
 
      //constructor to initialise variables
     MasaDBClass(){
-        this.db_url = "jdbc:mysql://localhost:3308/masadb1?zeroDateTimeBehavior=CONVERT_TO_NULL"; //initialize if my url
+        this.db_url = "jdbc:mysql://localhost:3306/masadb1?zeroDateTimeBehavior=CONVERT_TO_NULL"; //initialize if my url
         //this.JDBC_DRIVER = ; // my driver
         this.USER = "root"; //root
-        this.PASS = "Biust@2021"; //Biust@2021
+        this.PASS = ""; //Biust@2021
 
        
 
@@ -121,6 +121,40 @@ public class MasaDBClass {
         //return cars list to caller, may be empty if error occurred
         return productsList;
     }
+    
+    //method to get all product from db, returns ArrayList of objects of product
+    public boolean deleteProduct( String productCode) {
+        
+        boolean confirmation = false;
+        
+        try {
+
+            //Execute a query
+            query =  "delete * from stock where code = ?";
+            ps = conn.prepareStatement(query);
+            ps.setString(1, productCode);
+            ps.executeQuery();
+
+
+            //Close up
+            ps.close();
+            conn.close();
+            confirmation = true;
+
+        } catch(SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+
+        } catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+
+        }
+
+        //return cars list to caller, may be empty if error occurred
+        return confirmation;
+    }
+
     
     
     
@@ -260,7 +294,7 @@ public class MasaDBClass {
             //Execute a query
             
            //my query command to iserto into the user table
-            query =  "Insert into user(username, password, userType) values (?,?,?)";
+            query =  "Insert into users(username, password, userType) values (?,?,?)";
 
             //insert missing values in their positions, using a prepared statement
             ps = conn.prepareStatement(query);
@@ -292,7 +326,7 @@ public class MasaDBClass {
         
         try {
             //check password of matching user
-            query =  "select password from user where username=?";
+            query =  "select password from users where username=?";
             ps = conn.prepareStatement(query);
 
             //insert missing values
