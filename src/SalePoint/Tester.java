@@ -16,21 +16,11 @@ public class Tester {
         ob.connectDB();
         System.out.println(ob.connectDB());
         
-        
-        //ArrayList <Product> prods = ob.getProducts();
-        
-//        for(Product prod: prods){
-//            System.out.println(prod.toString());
-//        
-//        }
-        
-        
-        //System.out.println("results id : " +qunt);
-        
-        //testing the adding to sold stock
-       // SoldProducts prod = new SoldProducts("bw122",20,25.0,"21-02-12");
-        
-       // System.out.println(ob.addToSoldStock(prod));
+     ArrayList<SoldProducts> sList = ob.getSoldProductsByMonth("2021-11-19","2021-11-21");
+     
+     for(SoldProducts pro: sList){
+         System.out.println(pro.toString());
+     }
     }
     
 }

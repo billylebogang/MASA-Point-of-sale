@@ -4,6 +4,9 @@
  */
 package SalePoint;
 
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author lb19000961
@@ -15,6 +18,50 @@ public class StockSold extends javax.swing.JFrame {
      */
     public StockSold() {
         initComponents();
+        
+        display();
+        
+       
+    }
+    
+    
+    public void display(){
+       MasaDBClass db = new MasaDBClass();
+       db.connectDB();
+       ArrayList<SoldProducts> soldList = db.getSoldProducts();
+       
+       DefaultTableModel model = (DefaultTableModel)stockSoldTbl.getModel();
+       
+       Object[] row = new Object[7];
+       for(int i=0; i<soldList.size(); i++){
+           
+           row[1] = soldList.get(i).getSoldProductCode();
+           row[2] = soldList.get(i).getSoldQuantity();        
+           row[3] = soldList.get(i).getSoldTotalPrice();
+           row[4] = soldList.get(i).getSaleDate();
+           
+           model.addRow(row);
+       }
+    }
+    
+     public void display(String bdate, String edate){ //overloading the display method to filter by date
+       MasaDBClass db = new MasaDBClass();
+       db.connectDB();
+       
+       ArrayList<SoldProducts>soldList = db.getSoldProductsByMonth(bdate,edate);
+       
+       DefaultTableModel model = (DefaultTableModel)stockSoldTbl.getModel();
+       
+       Object[] row = new Object[7];
+       for(int i=0; i<soldList.size(); i++){
+           
+           row[1] = soldList.get(i).getSoldProductCode();
+           row[2] = soldList.get(i).getSoldQuantity();        
+           row[3] = soldList.get(i).getSoldTotalPrice();
+           row[4] = soldList.get(i).getSaleDate();
+           
+           model.addRow(row);
+       }
     }
 
     /**
@@ -27,10 +74,58 @@ public class StockSold extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        stockSoldTbl = new javax.swing.JTable();
+        txtBeginDate = new javax.swing.JTextField();
+        filterBtn = new javax.swing.JButton();
+        refreshBtn = new javax.swing.JButton();
+        txtEndDate = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Stock sold");
+
+        stockSoldTbl.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Sale no", "Product code", "Quantity", "Total Amount", "Date"
+            }
+        ));
+        jScrollPane1.setViewportView(stockSoldTbl);
+
+        txtBeginDate.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txtBeginDate.setText("Input date here");
+        txtBeginDate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtBeginDateActionPerformed(evt);
+            }
+        });
+
+        filterBtn.setText("Filter");
+        filterBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filterBtnActionPerformed(evt);
+            }
+        });
+
+        refreshBtn.setText("Refresh");
+        refreshBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshBtnActionPerformed(evt);
+            }
+        });
+
+        txtEndDate.setText("jTextField1");
+        txtEndDate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtEndDateActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("to:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -40,17 +135,75 @@ public class StockSold extends javax.swing.JFrame {
                 .addGap(221, 221, 221)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(238, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(72, 72, 72)
+                .addComponent(refreshBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 491, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(141, 141, 141)
+                        .addComponent(txtBeginDate, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addGap(28, 28, 28)
+                        .addComponent(txtEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36)
+                        .addComponent(filterBtn)))
+                .addGap(79, 79, 79))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(33, 33, 33)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(424, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(44, 44, 44)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtBeginDate, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(filterBtn)
+                    .addComponent(refreshBtn)
+                    .addComponent(txtEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtBeginDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBeginDateActionPerformed
+        // TODO add your handling code here:
+        
+        txtBeginDate.setText("");
+    }//GEN-LAST:event_txtBeginDateActionPerformed
+
+    private void filterBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterBtnActionPerformed
+        // TODO add your handling code here:
+        String beginDate = txtBeginDate.getText(); //getting the begin date from text field
+        String endDate = txtEndDate.getText(); //getting the end date
+  
+        DefaultTableModel model = (DefaultTableModel)stockSoldTbl.getModel();
+       model.setRowCount(0); //this clears the table and prepare for ne inputs
+       
+      
+       display(beginDate,endDate); //display the idata from the db
+        
+        
+        
+    }//GEN-LAST:event_filterBtnActionPerformed
+
+    private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshBtnActionPerformed
+        // TODO add your handling code here:
+        
+       DefaultTableModel model = (DefaultTableModel)stockSoldTbl.getModel();
+       model.setRowCount(0);
+       display();
+    }//GEN-LAST:event_refreshBtnActionPerformed
+
+    private void txtEndDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEndDateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEndDateActionPerformed
 
     /**
      * @param args the command line arguments
@@ -88,6 +241,13 @@ public class StockSold extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton filterBtn;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton refreshBtn;
+    private javax.swing.JTable stockSoldTbl;
+    private javax.swing.JTextField txtBeginDate;
+    private javax.swing.JTextField txtEndDate;
     // End of variables declaration//GEN-END:variables
 }

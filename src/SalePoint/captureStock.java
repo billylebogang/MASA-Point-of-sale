@@ -7,6 +7,7 @@ package SalePoint;
 import SalePoint.MasaDBClass;
 import SalePoint.Product;
 import java.util.ArrayList;
+import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -57,12 +58,13 @@ public class captureStock extends javax.swing.JFrame {
            
            model.addRow(row);
        }
-       
-       
-       
+ 
+   }
    
-   
-   
+   public void refresh(){
+       DefaultTableModel model = (DefaultTableModel)stockListTbl.getModel();
+       model.setRowCount(0);
+       display();
    }
 
     /**
@@ -100,13 +102,14 @@ public class captureStock extends javax.swing.JFrame {
         removeBtn = new javax.swing.JButton();
         checkStockBtn = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
-        productLst = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         stockListTbl = new javax.swing.JTable();
         refreshBtn = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        quanBtn = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        txtCode = new javax.swing.JTextField();
+        txtResults = new javax.swing.JTextField();
 
         label1.setText("label1");
 
@@ -214,13 +217,6 @@ public class captureStock extends javax.swing.JFrame {
 
         jLabel11.setText("Select product here:");
 
-        productLst.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "bread", "coke", "fanta 330ml" }));
-        productLst.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                productLstActionPerformed(evt);
-            }
-        });
-
         stockListTbl.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -267,14 +263,23 @@ public class captureStock extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Check Quantity");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        quanBtn.setText("Check Quantity");
+        quanBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                quanBtnActionPerformed(evt);
             }
         });
 
         jButton2.setText("check Expiry");
+
+        txtCode.setText("code here");
+        txtCode.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtCodeMouseClicked(evt);
+            }
+        });
+
+        txtResults.setText("Results");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -319,25 +324,25 @@ public class captureStock extends javax.swing.JFrame {
                                 .addGap(57, 57, 57)
                                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(127, 127, 127)
-                                        .addComponent(productLst, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(260, 260, 260))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel11)
-                                        .addGap(318, 318, 318)))
-                                .addComponent(refreshBtn))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                 .addGap(114, 114, 114)
                                 .addComponent(checkStockBtn)
                                 .addGap(18, 18, 18)
                                 .addComponent(removeBtn)
                                 .addGap(41, 41, 41)
-                                .addComponent(jButton1)
+                                .addComponent(quanBtn)
                                 .addGap(32, 32, 32)
-                                .addComponent(jButton2)))))
+                                .addComponent(jButton2))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addGap(164, 164, 164)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(txtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(103, 103, 103)
+                                        .addComponent(txtResults, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel11)
+                                        .addGap(318, 318, 318)
+                                        .addComponent(refreshBtn)))))))
                 .addContainerGap(47, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -389,12 +394,14 @@ public class captureStock extends javax.swing.JFrame {
                             .addComponent(jLabel11)
                             .addComponent(refreshBtn))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(productLst, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtResults, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(23, 23, 23)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(removeBtn)
                             .addComponent(checkStockBtn)
-                            .addComponent(jButton1)
+                            .addComponent(quanBtn)
                             .addComponent(jButton2))
                         .addGap(168, 168, 168)))
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -506,29 +513,32 @@ public class captureStock extends javax.swing.JFrame {
     
     
     
-    private void productLstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productLstActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_productLstActionPerformed
-
     private void removeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeBtnActionPerformed
         // TODO add your handling code here:
+        
+        String selectedProductCode = txtCode.getText();
+        
          MasaDBClass remove = new MasaDBClass();
          remove.connectDB();
-         
-         String selectedProductCode ="";
-         
+        
          if(remove.deleteStock(selectedProductCode)){
          
              System.out.println("the thing has been removed");
+             showMessageDialog(null, "The Product has been removed");
+             refresh();
+             
+             
          }
          else{
              System.out.println("there was a problem");
+             showMessageDialog(null, "There was a problem removing the product, check Product code provided");
          }
+         
          
         
         
         
-        
+        txtCode.setText("");
         
         
     }//GEN-LAST:event_removeBtnActionPerformed
@@ -546,14 +556,29 @@ public class captureStock extends javax.swing.JFrame {
         // TODO add your handling code here:
         
         //this method celar the table and calls the display method.
-       DefaultTableModel model = (DefaultTableModel)stockListTbl.getModel();
-       model.setRowCount(0);
-       display();
+        refresh();
+       
     }//GEN-LAST:event_refreshBtnActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void quanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quanBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        MasaDBClass db = new MasaDBClass();
+        db.connectDB();
+        
+        String code = txtCode.getText();
+        int quan = db.checkQuantity(code);
+        
+        txtResults.setText(Integer.toString(quan));
+        
+      
+        
+        
+    }//GEN-LAST:event_quanBtnActionPerformed
+
+    private void txtCodeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtCodeMouseClicked
+        // TODO add your handling code here:
+        txtCode.setText("");
+    }//GEN-LAST:event_txtCodeMouseClicked
 
     /**
      * @param args the command line arguments
@@ -595,7 +620,6 @@ public class captureStock extends javax.swing.JFrame {
     private javax.swing.JButton addBtn;
     private javax.swing.JButton checkStockBtn;
     private javax.swing.JButton clearBtn;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JFormattedTextField jFormattedTextField1;
@@ -614,16 +638,18 @@ public class captureStock extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private java.awt.Label label1;
-    private javax.swing.JComboBox<String> productLst;
+    private javax.swing.JButton quanBtn;
     private javax.swing.JButton refreshBtn;
     private javax.swing.JButton removeBtn;
     private javax.swing.JTable stockListTbl;
+    private javax.swing.JTextField txtCode;
     private javax.swing.JTextField txtCost;
     private javax.swing.JTextField txtExpectedReturn;
     private javax.swing.JTextField txtExpiryDate;
     private javax.swing.JTextField txtProductCode;
     private javax.swing.JTextField txtProductName;
     private javax.swing.JTextField txtQuantity;
+    private javax.swing.JTextField txtResults;
     private javax.swing.JTextField txtUnitPrice;
     // End of variables declaration//GEN-END:variables
 }

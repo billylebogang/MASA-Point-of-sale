@@ -486,7 +486,7 @@ public class MasaDBClass {
     }
     
     
-     public  boolean addToSoldStock(SoldProducts sold){
+    public  boolean addToSoldStock(SoldProducts sold){
         boolean comfirmation = false; //will be use to check if method wa successfull
 
         try{
@@ -520,7 +520,149 @@ public class MasaDBClass {
     }
     
     
+    public ArrayList<SoldProducts> getSoldProducts() { // this method gets the sold stock from the db
+
+        //create array list to store sold product objects from db
+        ArrayList<SoldProducts> soldList= new ArrayList<SoldProducts>();
+
+        try {
+
+            //Execute a query
+            query =  "SELECT * FROM `stocksold`";
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            //loop through and get results store in variables to later creata na arraylist
+            while (rs.next()){
+                String code = rs.getString("ProductCode");
+                int quantity = rs.getInt("quantity");
+                double price = rs.getInt("totalPrice");
+                String date = rs.getString("saleDate");
+                
+
+                //add a new sold product object with the values above
+                soldList.add(new SoldProducts(code,  quantity,  price,  date));
+            }
+
+            //Close up
+            ps.close();
+            conn.close();
+
+        } catch(SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+
+        } catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+
+        }
+
+        //return  lists of sold product object to the caller, may be empty if error occurred
+        return soldList;
+    }
     
+    
+    
+    
+    
+     public ArrayList<SoldProducts> getSoldProductsByDate(String inputDate) {
+
+        //create array list to store sold product objects from db
+        ArrayList<SoldProducts> soldList = new ArrayList<>();
+
+        try {
+
+            //Execute a query
+            query =  "SELECT * FROM stocksold WHERE saleDate = ?;";
+            ps = conn.prepareStatement(query);
+            ps.setString(1, inputDate);
+            
+            
+            rs = ps.executeQuery();
+
+            //loop through and get results store in variables to later creata na arraylist
+            while (rs.next()){
+                String code = rs.getString("ProductCode");
+                int quantity = rs.getInt("quantity");
+                double price = rs.getInt("totalPrice");
+                String date = rs.getString("saleDate");
+                
+
+                //add a new sold product object with the values above
+                soldList.add(new SoldProducts(code,  quantity,  price,  date));
+            }
+
+            //Close up
+            ps.close();
+            conn.close();
+
+        } catch(SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+
+        } catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+
+        }
+
+        //return  lists of sold product object to the caller, may be empty if error occurred
+        return soldList;
+    }
+     
+     
+      public ArrayList<SoldProducts> getSoldProductsByMonth(String beginDate, String endDate) {
+
+        //create array list to store sold product objects from db
+        ArrayList<SoldProducts> soldList = new ArrayList<>();
+
+        try {
+
+            
+            //Execute a query
+            query =  "SELECT * FROM `stocksold` WHERE saleDate BETWEEN ? AND ?";
+            ps = conn.prepareStatement(query);
+            
+            ps.setString(1, beginDate);
+            ps.setString(2, endDate);
+           
+            
+            
+            
+            rs = ps.executeQuery();
+
+            //loop through and get results store in variables to later creata na arraylist
+            while (rs.next()){
+                String code = rs.getString("ProductCode");
+                int quantity = rs.getInt("quantity");
+                double price = rs.getInt("totalPrice");
+                String date = rs.getString("saleDate");
+                
+
+                //add a new sold product object with the values above
+                soldList.add(new SoldProducts(code,  quantity,  price,  date));
+            }
+            
+            
+            //Close up
+            ps.close();
+            conn.close();
+            
+
+        } catch(SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+
+        } catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+
+        }
+
+        //return  lists of sold product object to the caller, may be empty if error occurred
+        return soldList;
+    }
     
     
     
