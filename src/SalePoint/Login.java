@@ -148,23 +148,32 @@ public class Login extends javax.swing.JFrame {
         auth.connectDB();
         String inputUsername = txtUsername.getText().toString();
         char[] inputPassword = txtPassword.getPassword();
-        System.out.println(inputPassword.toString());
-        
-//        if(auth.authenticateUser(inputUsername, inputPassword.toString())){
-//            
-//            System.out.println("the auth wa succefull");
-////            Main ma = new Main(); // creating a user intserface
-////            ma.show();
-////            dispose();
-//        }
-//        else{
-//            System.out.println("the was a problem check ur stuff");
-//        }
+        String pass = "";
+        for(char c: inputPassword){
+            pass+=c;
+        }
         
         
+        System.out.println(pass);
         
+        
+        if(auth.authenticateUser(inputUsername, pass)){
+            
+            System.out.println("the auth was succefull");
+//            Main ma = new Main(); // creating a user intserface
+//            ma.show();
+//            dispose();
+        }
+        else{
+            System.out.println("the was a problem check ur user details");
+        }
+        
+        
+        //create a method to check the usertype
     }//GEN-LAST:event_LoginBtnActionPerformed
 
+    
+    
     /**
      * @param args the command line arguments
      */

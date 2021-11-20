@@ -92,8 +92,8 @@ public class MasaDBClass {
 
             //loop through and get results store in variables to later creata na arraylist
             while (rs.next()){
-                String code = rs.getString("code");
-                String name = rs.getString("name");
+                String code = rs.getString("ProductCode");
+                String name = rs.getString("productName");
                 String date = rs.getString("expiryDate");
                 int quantity = rs.getInt("quantity");
                 double price = rs.getInt("unitPrice");
@@ -123,52 +123,18 @@ public class MasaDBClass {
     }
     
     //method to get all product from db, returns ArrayList of objects of product
-    public boolean deleteProduct( String productCode) {
-        
-        boolean confirmation = false;
-        
-        try {
-
-            //Execute a query
-            query =  "delete * from stock where code = ?";
-            ps = conn.prepareStatement(query);
-            ps.setString(1, productCode);
-            ps.executeQuery();
-
-
-            //Close up
-            ps.close();
-            conn.close();
-            confirmation = true;
-
-        } catch(SQLException se) {
-            //Handle errors for JDBC
-            se.printStackTrace();
-
-        } catch(Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-
-        }
-
-        //return cars list to caller, may be empty if error occurred
-        return confirmation;
-    }
-
-    
-    
-    
+   
     
     // tthis meethod will return product for selling from the stock table
      public SellingProduct getSellProduct(String inputCode) {
 
-        //create array list to store car objects from db
+        //creating a product object to return
         SellingProduct sellProduct= new SellingProduct();
 
         try {
 
             //Execute a query
-            query =  "select productcode,productName,unitPrice from stock where productCode = '?'";
+            query =  "select productCode,productName,unitPrice from stock where productCode = ?";
             ps = conn.prepareStatement(query);
             
              ps.setString(1,inputCode);
@@ -200,7 +166,7 @@ public class MasaDBClass {
 
         }
 
-        //return cars list to caller, may be empty if error occurred
+        //return sell product onbject to caller, may be empty if error occurred
         return sellProduct;
     }
      
@@ -284,6 +250,72 @@ public class MasaDBClass {
 
         return comfirmation;
     }
+    
+    
+     public  boolean decreaseProduct(String productCode, int quantity){
+        boolean comfirmation = false; //will be use to check if method wa successfull
+
+        try{
+            //Execute a query
+            
+            // a qury to update the product quantity
+            query =   "UPDATE `stock` SET `quantity`='`quantity -?`' WHERE `productCode` = ?;";
+
+            //insert missing values in their positions, using a prepared statement
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, quantity);
+            ps.setString(2, productCode);
+           
+
+            //execute the prepared statement
+            ps.executeUpdate();
+
+            //close up
+            ps.close();
+            conn.close();
+            
+            comfirmation=true;
+
+        }catch(SQLException se){
+            se.printStackTrace();
+        }
+
+        return comfirmation;
+    }
+     
+      public  int checkQuantity(String productCode){
+        int quantity = 0; //will be use to check if method wa successfull
+
+        try{
+            //Execute a query
+            
+            // a qury to update the product quantity
+            query =   "SELECT quantity FROM stock WHERE productCode = ?";
+
+            //insert missing values in their positions, using a prepared statement
+            ps = conn.prepareStatement(query);
+            ps.setString(1, productCode);
+            
+            rs = ps.executeQuery(); // set the result set to the out of prepared statemnet
+            
+            while(rs.next()){
+                quantity = rs.getInt("quantity");
+            
+            }
+           
+
+            //close up
+            ps.close();
+            conn.close();
+            
+            
+
+        }catch(SQLException se){
+            se.printStackTrace();
+        }
+
+        return quantity;
+    }
 
     
     public boolean addUser(Users user){ //takes in a user object
@@ -326,7 +358,7 @@ public class MasaDBClass {
         
         try {
             //check password of matching user
-            query =  "select password from users where username=?";
+            query =  "select password,userType from users where username=?";
             ps = conn.prepareStatement(query);
 
             //insert missing values
@@ -337,10 +369,12 @@ public class MasaDBClass {
 
             //store password from database
             String password = "";
+            
             //loop through and get results
             while (rs.next()){
                 //get password string
                 password = rs.getString("password");
+                
             }
 
             //if user does not exist, it will return blank
@@ -353,7 +387,6 @@ public class MasaDBClass {
                 
                 auth = true;
             }
-
 
             //Closing
             ps.close();
@@ -368,17 +401,67 @@ public class MasaDBClass {
 
         return auth;
     }
+     //method to check user login details -- takes input username and password
+    public String checkUserType(String inputUsername){
+        String user = ""; // to return a true if user exist and user input a correct password
+        
+        try {
+            //check usertype of matching user
+            query =  "select userType from users where username=?";
+            ps = conn.prepareStatement(query);
+
+            //insert missing values
+            ps.setString(1, inputUsername);
+            
+            //get password string
+            rs = ps.executeQuery();
+
+            //store password from database
+            
+            String usertype ="";
+            //loop through and get results
+            while (rs.next()){
+                //get usertype string
+               
+                usertype = rs.getString("userType");
+            }
+
+            //if user does not exist, it will return blank
+            if(usertype.equals("staff")){//username does not exist
+                
+                user  = "staff";
+            }
+            else{//check if password matches
+                
+                
+                user = "admin";
+            }
+
+            //Closing
+            ps.close();
+            conn.close();
+        } catch(SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+        } catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+
+        return user;
+    }
     
+    //this method will be used to delete the stock items..
     public boolean deleteStock(String productCode){
         boolean check = false;
         
          try {
 
             //Execute a query
-            query =  "delete from stock where productCode = ?";
+            query =  "delete  from stock where productCode = ?";
             ps = conn.prepareStatement(query);
             ps.setString(1,productCode);
-            rs = ps.executeQuery();
+            ps.execute();
 
        
             //Closing connection
@@ -401,6 +484,55 @@ public class MasaDBClass {
 
         return check;
     }
+    
+    
+     public  boolean addToSoldStock(SoldProducts sold){
+        boolean comfirmation = false; //will be use to check if method wa successfull
+
+        try{
+            //Execute a query
+            
+            // create an query statement to insert into stoslod
+            query =  "Insert into stocksold (productCode, quantity, totalPrice, saleDate) values (?,?,?,?)";
+
+            //insert missing values in their positions, using a prepared statement
+            ps = conn.prepareStatement(query);
+            
+            ps.setString(1, sold.getSoldProductCode());          
+            ps.setInt(2, sold.getSoldQuantity());            
+            ps.setDouble(3,sold.getSoldTotalPrice());
+            ps.setString(4, sold.getSaleDate());
+
+            //execute the prepared statement
+            ps.executeUpdate();
+
+            //close up
+            ps.close();
+            conn.close();
+            
+            comfirmation=true;
+
+        }catch(SQLException se){
+            se.printStackTrace();
+        }
+
+        return comfirmation;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
     
 

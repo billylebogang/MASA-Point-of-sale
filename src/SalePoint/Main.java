@@ -9,11 +9,15 @@ import SalePoint.SellingProduct;
 import static SalePoint.MakingSale.createSellProduct;
 import static SalePoint.MakingSale.listProduct;
 import static SalePoint.MakingSale.totalPrice;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -26,7 +30,8 @@ public class Main extends javax.swing.JFrame {
      */
     public Main() {
         initComponents();
-        
+        txtDate.setText(setDate());
+        txtTime.setText(setTime());
         
     }
 
@@ -65,7 +70,7 @@ public class Main extends javax.swing.JFrame {
         resultslLabel = new javax.swing.JLabel();
         recietPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        boughtTbl = new javax.swing.JTable();
         jLabel14 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         txtTime = new javax.swing.JTextField();
@@ -76,6 +81,8 @@ public class Main extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
         txtUsernameDispaly = new javax.swing.JTextField();
+        checkBtn = new javax.swing.JButton();
+        txtProductName = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -107,6 +114,11 @@ public class Main extends javax.swing.JFrame {
         txtTotal.setBorder(null);
         txtTotal.setMargin(new java.awt.Insets(2, 2, 2, 5));
         txtTotal.setName(""); // NOI18N
+        txtTotal.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtTotalMouseClicked(evt);
+            }
+        });
         txtTotal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTotalActionPerformed(evt);
@@ -152,6 +164,13 @@ public class Main extends javax.swing.JFrame {
         txtAddCode.setBorder(null);
         txtAddCode.setMargin(new java.awt.Insets(2, 2, 2, 5));
         txtAddCode.setName(""); // NOI18N
+        txtAddCode.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                txtAddCodeInputMethodTextChanged(evt);
+            }
+        });
         txtAddCode.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtAddCodeActionPerformed(evt);
@@ -251,10 +270,10 @@ public class Main extends javax.swing.JFrame {
 
         recietPanel.setBackground(new java.awt.Color(153, 153, 0));
 
-        jTable1.setBackground(java.awt.SystemColor.control);
-        jTable1.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 12)); // NOI18N
-        jTable1.setForeground(new java.awt.Color(102, 102, 0));
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        boughtTbl.setBackground(java.awt.SystemColor.control);
+        boughtTbl.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 12)); // NOI18N
+        boughtTbl.setForeground(new java.awt.Color(102, 102, 0));
+        boughtTbl.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -273,10 +292,10 @@ public class Main extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jTable1.setGridColor(new java.awt.Color(153, 153, 0));
-        jTable1.setRowHeight(25);
-        jTable1.setRowMargin(4);
-        jScrollPane1.setViewportView(jTable1);
+        boughtTbl.setGridColor(new java.awt.Color(153, 153, 0));
+        boughtTbl.setRowHeight(25);
+        boughtTbl.setRowMargin(4);
+        jScrollPane1.setViewportView(boughtTbl);
 
         jLabel14.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 18)); // NOI18N
         jLabel14.setForeground(new java.awt.Color(255, 255, 255));
@@ -417,6 +436,20 @@ public class Main extends javax.swing.JFrame {
                 .addContainerGap(38, Short.MAX_VALUE))
         );
 
+        checkBtn.setText("Check");
+        checkBtn.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                checkBtnStateChanged(evt);
+            }
+        });
+        checkBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkBtnActionPerformed(evt);
+            }
+        });
+
+        txtProductName.setText("product name");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -429,7 +462,6 @@ public class Main extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtAddCode, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -451,8 +483,14 @@ public class Main extends javax.swing.JFrame {
                                         .addGap(21, 21, 21)
                                         .addComponent(removeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(42, 42, 42)))
+                                .addGap(0, 19, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtProductName, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                                    .addComponent(txtAddCode))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(checkBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(23, 23, 23)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel1)
                     .addComponent(jLabel3)
@@ -485,11 +523,14 @@ public class Main extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtSubTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtAddCode, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtAddCode, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(checkBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtProductName)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel2)
                         .addGap(21, 21, 21)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -497,8 +538,8 @@ public class Main extends javax.swing.JFrame {
                                 .addComponent(jLabel3)
                                 .addGap(18, 18, 18)
                                 .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(60, 60, 60)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
                         .addComponent(jLabel7)
                         .addGap(42, 42, 42)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -565,7 +606,133 @@ public class Main extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+      public static String setDate(){ //method to get time
+        
+        LocalDate ate = LocalDate.now();
+        String date = ate.toString();
+        
+       
+     
+        return date;
+    }
+     public static String setTime(){ //method to get date 
+        LocalTime ime = LocalTime.now();
+        
+        String time = ime.toString();
+        
+       
+     
+        return time;
+    } 
+    String dat = setDate();
+    
+   
+    
+    
+    SellingProduct prod1; //declaring a product do initialisa everytime the product to sell is being created get added this one goes to reciet
+      
+    ArrayList<SellingProduct> list1 =new ArrayList<>(); //declaring a list to add product
+    
+    SoldProducts newsold; //declaring an new sold product to initialise everytime the product is created  this one goes to db
+    
+    ArrayList <SoldProducts> stockSold = new ArrayList<>(); //declariing and array to add sold stock here when add/sell button is clicked button
+   
+   //this method creats a new product has been sold
+   public SoldProducts createSoldProduct(String code, int quan, double total, String date){
+       SoldProducts newSoldProduct = new SoldProducts(code,quan,total,date);
+       return newSoldProduct;
+   }
+    
+    public void display( ){ //this metthod populates the table with product
+       
+       ArrayList<SellingProduct> pList = list1;
+       
+        DefaultTableModel model = (DefaultTableModel)boughtTbl.getModel();
+       
+       
+       Object[] row = new Object[4];
+       for(int i=0; i<pList.size(); i++){
+           
+           row[0] = pList.get(i).getProductCode();
+           row[1] = pList.get(i).getProductName();        
+           row[2] = pList.get(i).getQuantity();
+           row[3] = pList.get(i).getProductPrice();
+          
+           
+           model.addRow(row);
+       }
 
+    }
+    public void clearTable(){
+       DefaultTableModel model = (DefaultTableModel)boughtTbl.getModel();
+       model.setRowCount(0);
+       
+    }
+    
+    //this method will write to the file called recient talts the array od products, anount anf other details of the reciet
+    public void printOutReciept(ArrayList<SellingProduct> prods, String cashier, double totalAmount, double cusChange, double cashTendered){
+        
+        //to try and write int the reciet
+        
+        try{
+            //creting a file write with file name
+            FileWriter fw = new FileWriter("C:\\Users\\lebog\\OneDrive - biust.ac.bw\\Desktop\\reciet.txt");
+            
+             FileWriter logfw = new FileWriter("C:\\Users\\lebog\\OneDrive - biust.ac.bw\\Desktop\\cashierlog.txt"); //this will write to the cashier log
+            
+            String details1 = " MASA GENERAL DEALER \n"; //writing the store name
+            
+            
+            fw.write(details1);
+            logfw.append(details1);
+            for(SellingProduct prod: prods){ //writing the products that have been bought by the customer
+                fw.write(prod.toString() + "\n");
+                logfw.append(prod.toString() + "\n");
+            
+            }
+            //writting the total amount,change and the cash that was recieved frome the customer
+            fw.write("\n Total amount: "+totalAmount+"\n"); 
+            fw.write("\n cash tendered : "+cashTendered+"\n");
+            fw.write("\n Change is: "+cusChange+"\n");
+            fw.write("\n Date: "+setDate());
+            fw.write("\n Time :"+setTime());
+            
+            fw.close();
+            
+            
+            logfw.append("\n Total amount: "+totalAmount+"\n"); 
+            logfw.append("\n cash tendered : "+cashTendered+"\n");
+            logfw.append("\n Change is: "+cusChange+"\n");
+            fw.append(" \n Date: "+setDate());
+            fw.append("\n Time :"+setTime());
+            
+            logfw.close();
+        
+        }
+        
+        
+        catch(IOException e){ //catching the errors if the it fails to update
+            e.printStackTrace();
+            System.out.println("Not able to write into the file");
+        }
+       
+    }
+    public void addToSold(SoldProducts soldList){ // method adds the sold productto the db
+        MasaDBClass addtosold = new MasaDBClass();
+        addtosold.connectDB();
+        
+        
+            if(addtosold.addToSoldStock(soldList)){ //adding the product to sold stock if error happens else block is ran
+                System.out.println("product has been added successfully to sold stock.");
+            }
+            else{
+                System.out.println("there was problem adding the product to sold.");
+            }
+        
+        
+    }
+    
+    
     private void txtSubTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSubTotalActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSubTotalActionPerformed
@@ -584,27 +751,6 @@ public class Main extends javax.swing.JFrame {
 
     private void txtAddCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAddCodeActionPerformed
         // TODO add your handling code here:
-        //when the the code is added and enter id hit i should get the product the same code and populate theother fields
-        
-        String inputCode = txtAddCode.getText().toString(); // geting the user iput code
-        String name ="";
-        double price = 0;
-        int quantity =0;
-        
-        MasaDBClass getSellingProduct= new MasaDBClass();
-        
-        if(getSellingProduct.connectDB()){
-        SellingProduct product = getSellingProduct.getSellProduct(inputCode); //passing the code to the funtion that will rerive the product with that code and creating an object
-         name = product.getProductName(); //getting the name from the object a set it to the name 
-         price = product.getProductPrice(); //getting the price property og the opject an setting it to price
-         
-        }
-        String txtprice = Double.toString(price);//data converstion to string
-        
-        txtPrice.setText(txtprice); //setting the price tag automtically to the price of the product
-       
-       
-        
         
     }//GEN-LAST:event_txtAddCodeActionPerformed
 
@@ -616,33 +762,108 @@ public class Main extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTotalProductPriceActionPerformed
 
+    public double calculateTotalPrice(){
+         double totalprice; //declaring total
+        totalprice = totalPrice(list1); //passing the list array into the method to calculate total
+        txtSubTotal.setText(Double.toString(totalprice));
+        double total = (totalprice+totalprice*0.14);
+        
+        return total;
     
+    }
+    
+    
+    public void sell(){
+        
+         DecimalFormat df = new DecimalFormat("0.00"); // seeting some format
+      
+       double total  = calculateTotalPrice();
+       
+        String ttl = df.format(total);
+        txtTotal.setText(ttl);
+        
+       
+       
+        
+               
+              
+       String txttendered = txtTendered.getText(); // getting the tendered cash
+       double tendered = Double.parseDouble(txttendered); //converting to correct type to work with
+       
+       
+       if(tendered>total){ //check if tendered cash is valid
+           
+            double change = tendered - total; //calculating change
+            String chng = df.format(change); //formating and converting
+            txtChange.setText(chng); //setting the text filed to show change
+       
+            printOutReciept(list1,"Billy", total, change, tendered );
+             
+           printingProducts(list1); // printing to console the list of added products
+       
+           list1.clear();
+           
+       }
+       else{
+           showMessageDialog(null,"Please enter a valid tendered amount");
+           
+          
+       }
+       
+    
+    }
+    
+    public void printingProducts(ArrayList<SellingProduct> prods){
+        
+        for(SellingProduct prod: prods){
+            System.out.println(prod.toString());
+        }
+        
+    }
+    
+    public void reset (){
+        
+        //,ethod to reset all test fields
+            txtAddCode.setText("");
+           // txtChange.setText("");
+        
+            txtPrice.setText("");
+            txtProductName.setText("");
+            txtQuantity.setText("");
+            
+            txtSubTotal.setText("");
+            txtTendered.setText("");
+            
+            txtTotal.setText("");
+            txtTotalProductPrice.setText("");
+            
+        
+    
+    
+    }
     
     
     private void sellBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sellBtnActionPerformed
         // TODO add your handling code here:
-         DecimalFormat df = new DecimalFormat("0.00");
-      
-        double totalprice; //declaring total
-        totalprice = totalPrice(list1); //passing the list array into the method to calculate total
         
-        txtSubTotal.setText(Double.toString(totalprice));
-        double total = (totalprice+totalprice*0.14);
-        String ttl = df.format(total);
-        txtTotal.setText(ttl);
-        
-        System.out.println(totalprice);
+        if(list1.size()>0){ // can only if you have added products
+            sell(); //calling the sell method
        
-        for( int i=0; i <list1.size(); i++){
-            
-            
+            printingProducts(list1); // to check if the array has bee cleared for next transaction
+       
+       
+            reset();// to implemet when able to display the the total without having to tap on the button
+        
+        }
+        else{
+            showMessageDialog(null," Please add some product to sell");
         }
         
-       String txttendered = txtTendered.getText().toString(); // getting the tendered cash
-       double tendered = Double.parseDouble(txttendered); //converting to correct type to work with
-       double change = tendered - total; //calculating change
-       String chng = df.format(change); //formating and converting
-       txtChange.setText(chng); //setting the text filed to show change
+   
+        
+      
+       
+     
        
        
     }//GEN-LAST:event_sellBtnActionPerformed
@@ -651,41 +872,22 @@ public class Main extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_removeBtnActionPerformed
 
-    SellingProduct prod1; //declaring a product do initialisa everytime the producr get added
-      
-    ArrayList<SellingProduct> list1 =new ArrayList<>(); //declaring a list to add product
-    
-    public static String setDate(){ //method to get time
-        
-        LocalDate ate = LocalDate.now();
-        String date = ate.toString();
-        
-       
-     
-        return date;
-    }
-     public static String setTime(){ //method to get date 
-        LocalTime ime = LocalTime.now();
-        
-        String time = ime.toString();
-        
-       
-     
-        return time;
-    } 
-     
-     
-   
+
     
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
         // TODO add your handling code here:
+     
         DecimalFormat df = new DecimalFormat("0.00");
         //getting the text input
-        String code = txtAddCode.getText().toString();
-        String name = "null";
-        String quan = txtQuantity.getText().toString();
-        String prce = txtPrice.getText().toString();
+        String code = txtAddCode.getText();
+        String name = txtProductName.getText();
+        String quan = txtQuantity.getText();
+        String prce = txtPrice.getText();
         
+        
+        if(quan.isBlank() || Integer.parseInt(quan) < 1){ //setting the quantity to one if the value isn ot set by the seller/cashier
+            quan = "1";
+        }
         //coverting to approriate type
         int quantity = Integer.parseInt(quan);
         double price = Double.parseDouble(prce);
@@ -697,6 +899,10 @@ public class Main extends javax.swing.JFrame {
 
       
         prod1 = createSellProduct(code,name,price,quantity); //passing the input into the object
+        newsold = createSoldProduct(code, quantity, totalProdPrice, setDate()); // creating the sold product to add to db
+        
+        addToSold(newsold); //add the currect product processed to the stock sold stock array that will be added to db by sell btn
+        
              
         list1.add(prod1); //addig the ject int the array
        
@@ -707,7 +913,7 @@ public class Main extends javax.swing.JFrame {
         txtQuantity.setText("");
         txtPrice.setText("");
         txtAddCode.hasFocus();
-        
+        display();
         
     }//GEN-LAST:event_addBtnActionPerformed
 
@@ -726,6 +932,43 @@ public class Main extends javax.swing.JFrame {
     private void txtUsernameDispalyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameDispalyActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsernameDispalyActionPerformed
+
+    private void txtAddCodeInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_txtAddCodeInputMethodTextChanged
+        // TODO add your handling code here:
+       
+        
+        
+    }//GEN-LAST:event_txtAddCodeInputMethodTextChanged
+
+    private void checkBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBtnActionPerformed
+        // TODO add your handling code here:
+        clearTable();
+         MasaDBClass gettinProduct = new MasaDBClass();
+        gettinProduct.connectDB();
+        
+        String inputCode = txtAddCode.getText().toString();
+        
+        SellingProduct prodToSell = gettinProduct.getSellProduct(inputCode);
+        
+        txtPrice.setText(Double.toString(prodToSell.getProductPrice()));
+        txtProductName.setText(prodToSell.getProductName());
+        
+    }//GEN-LAST:event_checkBtnActionPerformed
+
+    private void checkBtnStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_checkBtnStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_checkBtnStateChanged
+
+    private void txtTotalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtTotalMouseClicked
+        // TODO add your handling code here:
+        DecimalFormat df = new DecimalFormat("0.00"); // seeting some format
+      
+        double total  = calculateTotalPrice();
+        
+        String ttl = df.format(total);
+        txtTotal.setText(ttl);
+        
+    }//GEN-LAST:event_txtTotalMouseClicked
 
     
     /**
@@ -772,6 +1015,8 @@ public class Main extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBtn;
+    private javax.swing.JTable boughtTbl;
+    private javax.swing.JButton checkBtn;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -791,7 +1036,6 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JPanel recietPanel;
     private javax.swing.JButton removeBtn;
     private javax.swing.JLabel resultslLabel;
@@ -800,6 +1044,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JTextField txtChange;
     private javax.swing.JTextField txtDate;
     private javax.swing.JTextField txtPrice;
+    private javax.swing.JTextField txtProductName;
     private javax.swing.JTextField txtQuantity;
     private javax.swing.JTextField txtSearch;
     private javax.swing.JTextField txtSubTotal;
