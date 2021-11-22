@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class Tester {
     public static void main(String[] args) {
-        MasaDBClass ob = new MasaDBClass();
+        MasaDB ob = new MasaDB();
         ob.connectDB();
         System.out.println(ob.connectDB());
         

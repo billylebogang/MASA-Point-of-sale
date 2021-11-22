@@ -444,7 +444,7 @@ public class test extends javax.swing.JFrame {
         double price = 0;
         int quantity =0;
         
-        MasaDBClass getSellingProduct= new MasaDBClass();
+        MasaDB getSellingProduct= new MasaDB();
         
         if(getSellingProduct.connectDB()){
         SellingProduct product = getSellingProduct.getSellProduct(inputCode); //passing the code to the funtion that will rerive the product with that code and creating an object

@@ -12,7 +12,7 @@ import java.sql.*;
  *
  * @author lb19000961
  */
-public class MasaDBClass {
+public class MasaDB {
   
 
 
@@ -32,7 +32,7 @@ public class MasaDBClass {
     ResultSet rs;
 
      //constructor to initialise variables
-    MasaDBClass(){
+    MasaDB(){
         this.db_url = "jdbc:mysql://localhost:3306/masadb1?zeroDateTimeBehavior=CONVERT_TO_NULL"; //initialize if my url
         //this.JDBC_DRIVER = ; // my driver
         this.USER = "root"; //root
@@ -41,7 +41,7 @@ public class MasaDBClass {
        
 
     }
-    
+    //method to connect database
     public  boolean connectDB(){
             boolean connectionCheck  = false;
          //attempt to connect to database whenever constructor is called
@@ -121,10 +121,7 @@ public class MasaDBClass {
         //return cars list to caller, may be empty if error occurred
         return productsList;
     }
-    
-    //method to get all product from db, returns ArrayList of objects of product
    
-    
     // tthis meethod will return product for selling from the stock table
      public SellingProduct getSellProduct(String inputCode) {
 
@@ -170,9 +167,6 @@ public class MasaDBClass {
         return sellProduct;
     }
      
-     
-     
-
     //method that will be use to get product details by searching for it by code
     public Product getProductsQuantity(String code) {
 
@@ -251,8 +245,7 @@ public class MasaDBClass {
         return comfirmation;
     }
     
-    
-     public  boolean decreaseProduct(String productCode, int quantity){
+    public  boolean decreaseProduct(String productCode, int quantity){
         boolean comfirmation = false; //will be use to check if method wa successfull
 
         try{
@@ -283,7 +276,7 @@ public class MasaDBClass {
         return comfirmation;
     }
      
-      public  int checkQuantity(String productCode){
+    public  int checkQuantity(String productCode){
         int quantity = 0; //will be use to check if method wa successfull
 
         try{
@@ -317,7 +310,7 @@ public class MasaDBClass {
         return quantity;
     }
 
-    
+    //this method will be called to add the user to db
     public boolean addUser(Users user){ //takes in a user object
         
          boolean comfirmation = false; //will be use to check if method was successfull
@@ -350,8 +343,6 @@ public class MasaDBClass {
         return comfirmation;
     
     }
-    
-  
     //method to check user login details -- takes input username and password
     public boolean authenticateUser(String inputUsername, String inputPassword){
         boolean auth = false; // to return a true if user exist and user input a correct password
@@ -413,19 +404,16 @@ public class MasaDBClass {
             //insert missing values
             ps.setString(1, inputUsername);
             
-            //get password string
+            
             rs = ps.executeQuery();
 
-            //store password from database
-            
-            String usertype ="";
+            String usertype =""; //to set to the user type that will be returned
             //loop through and get results
             while (rs.next()){
                 //get usertype string
                
                 usertype = rs.getString("userType");
             }
-
             //if user does not exist, it will return blank
             if(usertype.equals("staff")){//username does not exist
                 
@@ -490,9 +478,9 @@ public class MasaDBClass {
         boolean comfirmation = false; //will be use to check if method wa successfull
 
         try{
-            //Execute a query
             
-            // create an query statement to insert into stoslod
+            
+            // create an query statement to insert into stocksold
             query =  "Insert into stocksold (productCode, quantity, totalPrice, saleDate) values (?,?,?,?)";
 
             //insert missing values in their positions, using a prepared statement
@@ -516,7 +504,7 @@ public class MasaDBClass {
             se.printStackTrace();
         }
 
-        return comfirmation;
+        return comfirmation; //return the confirmation of insert
     }
     
     
@@ -527,10 +515,10 @@ public class MasaDBClass {
 
         try {
 
-            //Execute a query
+            //the select query
             query =  "SELECT * FROM `stocksold`";
             ps = conn.prepareStatement(query);
-            rs = ps.executeQuery();
+            rs = ps.executeQuery(); //execution here
 
             //loop through and get results store in variables to later creata na arraylist
             while (rs.next()){
@@ -539,56 +527,6 @@ public class MasaDBClass {
                 double price = rs.getInt("totalPrice");
                 String date = rs.getString("saleDate");
                 
-
-                //add a new sold product object with the values above
-                soldList.add(new SoldProducts(code,  quantity,  price,  date));
-            }
-
-            //Close up
-            ps.close();
-            conn.close();
-
-        } catch(SQLException se) {
-            //Handle errors for JDBC
-            se.printStackTrace();
-
-        } catch(Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-
-        }
-
-        //return  lists of sold product object to the caller, may be empty if error occurred
-        return soldList;
-    }
-    
-    
-    
-    
-    
-     public ArrayList<SoldProducts> getSoldProductsByDate(String inputDate) {
-
-        //create array list to store sold product objects from db
-        ArrayList<SoldProducts> soldList = new ArrayList<>();
-
-        try {
-
-            //Execute a query
-            query =  "SELECT * FROM stocksold WHERE saleDate = ?;";
-            ps = conn.prepareStatement(query);
-            ps.setString(1, inputDate);
-            
-            
-            rs = ps.executeQuery();
-
-            //loop through and get results store in variables to later creata na arraylist
-            while (rs.next()){
-                String code = rs.getString("ProductCode");
-                int quantity = rs.getInt("quantity");
-                double price = rs.getInt("totalPrice");
-                String date = rs.getString("saleDate");
-                
-
                 //add a new sold product object with the values above
                 soldList.add(new SoldProducts(code,  quantity,  price,  date));
             }
@@ -612,7 +550,7 @@ public class MasaDBClass {
     }
      
      
-      public ArrayList<SoldProducts> getSoldProductsByMonth(String beginDate, String endDate) {
+      public ArrayList<SoldProducts> getSoldProductsByMonth(String beginDate, String endDate) { //this method retrives sold product by dates
 
         //create array list to store sold product objects from db
         ArrayList<SoldProducts> soldList = new ArrayList<>();
@@ -623,13 +561,10 @@ public class MasaDBClass {
             //Execute a query
             query =  "SELECT * FROM `stocksold` WHERE saleDate BETWEEN ? AND ?";
             ps = conn.prepareStatement(query);
-            
+            //setting unknowm parameters
             ps.setString(1, beginDate);
             ps.setString(2, endDate);
-           
-            
-            
-            
+            //executing the query
             rs = ps.executeQuery();
 
             //loop through and get results store in variables to later creata na arraylist
@@ -643,8 +578,7 @@ public class MasaDBClass {
                 //add a new sold product object with the values above
                 soldList.add(new SoldProducts(code,  quantity,  price,  date));
             }
-            
-            
+       
             //Close up
             ps.close();
             conn.close();
