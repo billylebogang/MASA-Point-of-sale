@@ -598,6 +598,56 @@ public class MasaDB {
         return soldList;
     }
     
+     public ArrayList<Product> getExpiredStock(String expDate) { //this method retrives sold product by dates
+
+        //create array list to store sold product objects from db
+        ArrayList<Product> expiredList = new ArrayList<>();
+
+        try {
+
+            
+            //Execute a query
+            query =  "SELECT * FROM `stock` WHERE expiryDate <?";
+            ps = conn.prepareStatement(query);
+            //setting unknowm parameters
+            ps.setString(1, expDate);
+           
+            //executing the query
+            rs = ps.executeQuery();
+
+            //loop through and get results store in variables to later creata na arraylist
+            while (rs.next()){
+                String code = rs.getString("ProductCode");
+                String name = rs.getString("productName");
+                String date = rs.getString("expiryDate");
+                int quantity = rs.getInt("quantity");
+                double price = rs.getInt("unitPrice");
+                double profit = rs.getInt("expectedReturn");
+                double cost = rs.getInt("cost");
+
+                //add a new product object with the values above
+                expiredList.add(new Product(code, name, date, quantity, cost ,price,profit));
+            }
+            //Close up
+            ps.close();
+            conn.close();
+            
+
+        } catch(SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+
+        } catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+
+        }
+
+        //return  lists of sold product object to the caller, may be empty if error occurred
+        return expiredList;
+    }
+    
+    
     
     
     

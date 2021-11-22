@@ -16,6 +16,14 @@ public class NewUser extends javax.swing.JFrame {
     public NewUser() {
         initComponents();
     }
+    
+    public boolean checkpasswords(String pass1,String pass2){ //method that is used to check if password and confirm password are the same
+        boolean check = false;
+        if(pass1.equals(pass2)){
+            check = true;
+        }
+    return check;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -48,8 +56,6 @@ public class NewUser extends javax.swing.JFrame {
         jLabel1.setText("Add new user");
 
         txtUsername.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 18)); // NOI18N
-        txtUsername.setForeground(new java.awt.Color(255, 255, 255));
-        txtUsername.setText("username");
         txtUsername.setBorder(null);
         txtUsername.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -62,13 +68,9 @@ public class NewUser extends javax.swing.JFrame {
         jLabel2.setText("Username");
 
         passwordField.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 18)); // NOI18N
-        passwordField.setForeground(new java.awt.Color(255, 255, 255));
-        passwordField.setText("jPasswordField1");
         passwordField.setBorder(null);
 
         confirmPassword.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 18)); // NOI18N
-        confirmPassword.setForeground(new java.awt.Color(255, 255, 255));
-        confirmPassword.setText("jPasswordField2");
         confirmPassword.setBorder(null);
 
         jLabel3.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 18)); // NOI18N
@@ -118,35 +120,37 @@ public class NewUser extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(122, 122, 122)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2))
-                        .addGap(32, 32, 32)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(adminCheckBx)
-                            .addComponent(passwordField)
-                            .addComponent(confirmPassword)
-                            .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(66, 66, 66))
-                            .addComponent(addBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(clearBtn)
-                                .addGap(234, 234, 234)))))
-                .addContainerGap(186, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(122, 122, 122)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel2))
+                                .addGap(32, 32, 32)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(adminCheckBx)
+                                    .addComponent(passwordField)
+                                    .addComponent(confirmPassword)
+                                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(66, 66, 66))
+                                    .addComponent(addBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                        .addComponent(clearBtn)
+                                        .addGap(234, 234, 234)))))
+                        .addGap(0, 168, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18))
         );
 
@@ -209,13 +213,16 @@ public class NewUser extends javax.swing.JFrame {
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
         // TODO add your handling code here:
         
-        String password = passwordField.getPassword().toString(); //getting password fields
-        String password2 = confirmPassword.getPassword().toString();
+        String password = passwordField.getText(); //getting password fields
+        String password2 = confirmPassword.getText();
         
         String pass = password.toString(); //converting the fields to string
         String pass2 = password2.toString();
       
         Users user1 = new Users();
+        
+        if(checkpasswords(pass,pass2)){
+        
        
         if( txtUsername.getText() != ""){ //if successfull add the object to the database
            
@@ -236,16 +243,28 @@ public class NewUser extends javax.swing.JFrame {
             
         }
         
+        
         //calling the db method to add to the database
         MasaDB userAdding = new MasaDB(); //pass the paramters
         userAdding.connectDB();
        if (userAdding.addUser(user1)){
+           showMessageDialog(null, "User has been created");
+          // this.dispose();
        
            System.out.println("user has been added succesfull");
-       }else{
+       }
+       else{
+           showMessageDialog(null, "There was a problem adding the user");
            System.out.println("there was a problem");
        }
+        }
+        else{
+            
+            showMessageDialog(null, "Password do not match, please enter matching passwords");
+           passwordField.setText(""); //getting password fields
+           confirmPassword.setText("");
         
+        }
         
         
         

@@ -6,6 +6,8 @@ package SalePoint;
 
 import SalePoint.MasaDB;
 import SalePoint.Product;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.table.DefaultTableModel;
@@ -33,19 +35,16 @@ public class captureStock extends javax.swing.JFrame {
            System.out.println(prod.toString());
        
        }
-       
-       
-   
    }
    
-   public void display(){
-       MasaDB db = new MasaDB();
-       db.connectDB();
-       ArrayList<Product> pList = db.getProducts();
+   public void display(){ //this method displays to the table from the db, the stock added
+       MasaDB db = new MasaDB(); //creatingn and db cobject
+       db.connectDB(); //connecting the db
+       ArrayList<Product> pList = db.getProducts(); //
        
        DefaultTableModel model = (DefaultTableModel)stockListTbl.getModel();
        
-       Object[] row = new Object[7];
+       Object[] row = new Object[7]; //inserting the data into the table
        for(int i=0; i<pList.size(); i++){
            
            row[0] = pList.get(i).getProductCode();
@@ -61,11 +60,50 @@ public class captureStock extends javax.swing.JFrame {
  
    }
    
-   public void refresh(){
+   
+   public void display(String exDate){ //overloaded method that will display expired product, or those about to expire
+       MasaDB db = new MasaDB();
+       db.connectDB(); //db connection
+       ArrayList<Product> expired = db.getExpiredStock(exDate); //creating an array of expired products
+       
+       DefaultTableModel model = (DefaultTableModel)stockListTbl.getModel();
+       
+       //inseertin into a table
+       Object[] row = new Object[7];
+       for(int i=0; i<expired.size(); i++){
+           
+           row[0] = expired.get(i).getProductCode();
+           row[1] = expired.get(i).getProductName();        
+           row[2] = expired.get(i).getExpiryDate();
+           row[3] = expired.get(i).getStockQuantity();
+           row[4] = expired.get(i).getProductCost();
+           row[5] = expired.get(i).getProductPrice();
+           row[6] = expired.get(i).getExpectedReturn();
+           
+           model.addRow(row);
+       }
+ 
+   }
+   
+   public void clearTable(){ //this method clears the table contents
        DefaultTableModel model = (DefaultTableModel)stockListTbl.getModel();
        model.setRowCount(0);
+   }
+   
+   public void refresh(){ //this methods clears the table and display updated list into the table
+       clearTable();
        display();
    }
+   
+    public static String setDate(){ //method to get date 
+        LocalDate ime = LocalDate.now();
+        
+        String date = ime.toString();
+        
+       
+     
+        return date;
+    } 
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -107,8 +145,11 @@ public class captureStock extends javax.swing.JFrame {
         quanBtn = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         txtCode = new javax.swing.JTextField();
-        txtResults = new javax.swing.JTextField();
+        expiryDateCheck = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
+        txtResults1 = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
 
         label1.setText("label1");
 
@@ -211,6 +252,11 @@ public class captureStock extends javax.swing.JFrame {
         txtExpectedReturn.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 18)); // NOI18N
         txtExpectedReturn.setText("return");
         txtExpectedReturn.setBorder(null);
+        txtExpectedReturn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtExpectedReturnMouseClicked(evt);
+            }
+        });
 
         clearBtn.setBackground(new java.awt.Color(102, 204, 0));
         clearBtn.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 18)); // NOI18N
@@ -318,6 +364,11 @@ public class captureStock extends javax.swing.JFrame {
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("check Expiry");
         jButton2.setBorder(null);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         txtCode.setText("code here");
         txtCode.setBorder(null);
@@ -327,11 +378,26 @@ public class captureStock extends javax.swing.JFrame {
             }
         });
 
-        txtResults.setText("Results");
-        txtResults.setBorder(null);
+        expiryDateCheck.setText("yyyy-mm-dd");
+        expiryDateCheck.setBorder(null);
+        expiryDateCheck.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                expiryDateCheckMouseClicked(evt);
+            }
+        });
+        expiryDateCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                expiryDateCheckActionPerformed(evt);
+            }
+        });
 
         jLabel11.setFont(new java.awt.Font("MV Boli", 0, 14)); // NOI18N
         jLabel11.setText("Masa General Dealer");
+
+        txtResults1.setText("Results");
+        txtResults1.setBorder(null);
+
+        jLabel12.setText("click for today date");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -345,7 +411,7 @@ public class captureStock extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(66, 66, 66)
                         .addComponent(jLabel10)))
-                .addContainerGap(1241, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel11)
@@ -375,7 +441,8 @@ public class captureStock extends javax.swing.JFrame {
                             .addComponent(txtQuantity)
                             .addComponent(txtExpiryDate)
                             .addComponent(txtProductName)
-                            .addComponent(txtProductCode, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtProductCode, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(addBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -390,88 +457,91 @@ public class captureStock extends javax.swing.JFrame {
                                 .addComponent(refreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(150, 150, 150)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(150, 150, 150)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(removeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(txtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(41, 41, 41)
-                                        .addComponent(txtResults, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(41, 41, 41)
-                                .addComponent(quanBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(txtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(54, 54, 54)
+                                .addComponent(txtResults1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(203, 203, 203))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(removeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(31, 31, 31)
                                 .addComponent(checkStockBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(369, 369, 369)))
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(315, 315, 315))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(quanBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(48, 48, 48)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(expiryDateCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel12))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {txtCode, txtCost, txtExpectedReturn, txtExpiryDate, txtProductCode, txtProductName, txtQuantity, txtResults, txtUnitPrice});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {expiryDateCheck, txtCode, txtCost, txtExpectedReturn, txtExpiryDate, txtProductCode, txtProductName, txtQuantity, txtUnitPrice});
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(45, 45, 45)
                 .addComponent(jLabel10)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(txtProductCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(34, 34, 34)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(txtProductName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtExpiryDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addGap(25, 25, 25)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(24, 24, 24)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(txtCost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(refreshBtn)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel12)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel2)
-                                    .addComponent(txtProductCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(34, 34, 34)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel3)
-                                    .addComponent(txtProductName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(30, 30, 30)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(txtExpiryDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel4))
-                                .addGap(25, 25, 25)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel5)
-                                    .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(24, 24, 24)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel6)
-                                    .addComponent(txtCost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(refreshBtn)))
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel9)
-                                    .addComponent(txtUnitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(44, 44, 44)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel8)
-                                    .addComponent(txtExpectedReturn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(txtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtResults, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(21, 21, 21)))
-                        .addGap(41, 41, 41)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(clearBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(addBtn))
-                        .addGap(407, 407, 407))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(checkStockBtn)
                             .addComponent(removeBtn)
                             .addComponent(quanBtn)
                             .addComponent(jButton2))
-                        .addGap(440, 440, 440)))
+                        .addGap(440, 440, 440))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel8)
+                                .addComponent(txtExpectedReturn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(9, 9, 9)
+                            .addComponent(jLabel1)
+                            .addGap(20, 20, 20)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(clearBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(addBtn))
+                            .addGap(407, 407, 407))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtResults1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(expiryDateCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtUnitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel9))
+                            .addGap(537, 537, 537))))
                 .addComponent(jLabel11)
                 .addGap(11, 11, 11)
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -480,7 +550,7 @@ public class captureStock extends javax.swing.JFrame {
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {addBtn, checkStockBtn, clearBtn, jButton2, quanBtn, refreshBtn, removeBtn});
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {txtCode, txtCost, txtExpectedReturn, txtExpiryDate, txtProductCode, txtProductName, txtQuantity, txtResults, txtUnitPrice});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {expiryDateCheck, txtCode, txtCost, txtExpectedReturn, txtExpiryDate, txtProductCode, txtProductName, txtQuantity, txtUnitPrice});
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -492,9 +562,10 @@ public class captureStock extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 722, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -544,7 +615,7 @@ public class captureStock extends javax.swing.JFrame {
 //        txtUnitPrice.setText("");
 //        txtQuantity.setText("");
 //        txtProductCode.grabFocus();
-            clear();
+          clear();
 
 
         
@@ -552,13 +623,13 @@ public class captureStock extends javax.swing.JFrame {
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
         // TODO add your handling code here:
-        String cst = txtCost.getText().toString();
-        String date = txtExpiryDate.getText().toString();
+        String cst = txtCost.getText();
+        String date = txtExpiryDate.getText();
         
-        String code = txtProductCode.getText().toString();
-        String name = txtProductName.getText().toString();
-        String quan = txtQuantity.getText().toString();
-        String prce = txtUnitPrice.getText().toString();
+        String code = txtProductCode.getText();
+        String name = txtProductName.getText();
+        String quan = txtQuantity.getText();
+        String prce = txtUnitPrice.getText();
         
         double cost = Double.parseDouble(cst);
          // the expected return
@@ -575,17 +646,16 @@ public class captureStock extends javax.swing.JFrame {
         dbObject.connectDB();
         
         if(dbObject.addProduct(product1)){ //passing the product object to a db funtion that adds to database
-            System.out.println("Product added successfully");
+            System.out.println("Stock added successfully to db");
+            showMessageDialog(null, "The product has been, refresh list");
             //set notification here foe product added success
             clear();
         }
         else{
-            System.out.println("there was a problem");
+            showMessageDialog(null, "There was problem adding the product.");
+            System.out.println("there was a problem adding stock to db");
         }
         
-        System.out.println(product1.toString());
-        
-                
     }//GEN-LAST:event_addBtnActionPerformed
 
     
@@ -611,11 +681,7 @@ public class captureStock extends javax.swing.JFrame {
              System.out.println("there was a problem");
              showMessageDialog(null, "There was a problem removing the product, check Product code provided");
          }
-         
-         
-        
-        
-        
+      
         txtCode.setText("");
         
         
@@ -640,13 +706,15 @@ public class captureStock extends javax.swing.JFrame {
 
     private void quanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quanBtnActionPerformed
         // TODO add your handling code here:
+        //this button checks for quatity
+        
         MasaDB db = new MasaDB();
         db.connectDB();
         
         String code = txtCode.getText();
         int quan = db.checkQuantity(code);
         
-        txtResults.setText(Integer.toString(quan));
+        txtResults1.setText(Integer.toString(quan));
         
       
         
@@ -657,6 +725,44 @@ public class captureStock extends javax.swing.JFrame {
         // TODO add your handling code here:
         txtCode.setText("");
     }//GEN-LAST:event_txtCodeMouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        
+        String expirydate = expiryDateCheck.getText();
+        clearTable();
+        display(expirydate);
+        expiryDateCheck.setText("yyyy-mm-dd");
+ 
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void expiryDateCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_expiryDateCheckActionPerformed
+        // TODO add your handling code here:
+        
+        
+    }//GEN-LAST:event_expiryDateCheckActionPerformed
+
+    private void expiryDateCheckMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expiryDateCheckMouseClicked
+        // TODO add your handling code here:
+        expiryDateCheck.setText(setDate());
+    }//GEN-LAST:event_expiryDateCheckMouseClicked
+
+    private void txtExpectedReturnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtExpectedReturnMouseClicked
+        // TODO add your handling code here:
+        String quan = txtQuantity.getText();
+        String prce = txtUnitPrice.getText();
+        
+        
+         // the expected return
+        int quantity = Integer.parseInt(quan);
+        double price = Double.parseDouble(prce);
+        
+        double profit = quantity*price;
+        
+        txtExpectedReturn.setText(Double.toString(profit));
+        
+    }//GEN-LAST:event_txtExpectedReturnMouseClicked
 
     /**
      * @param args the command line arguments
@@ -698,11 +804,14 @@ public class captureStock extends javax.swing.JFrame {
     private javax.swing.JButton addBtn;
     private javax.swing.JButton checkStockBtn;
     private javax.swing.JButton clearBtn;
+    private javax.swing.JTextField expiryDateCheck;
     private javax.swing.JButton jButton2;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JFormattedTextField jFormattedTextField1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -726,7 +835,7 @@ public class captureStock extends javax.swing.JFrame {
     private javax.swing.JTextField txtProductCode;
     private javax.swing.JTextField txtProductName;
     private javax.swing.JTextField txtQuantity;
-    private javax.swing.JTextField txtResults;
+    private javax.swing.JTextField txtResults1;
     private javax.swing.JTextField txtUnitPrice;
     // End of variables declaration//GEN-END:variables
 }

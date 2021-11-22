@@ -248,7 +248,7 @@ public class Admin extends javax.swing.JFrame {
         
         NewUser user = new NewUser(); //new object of the adding the user
         user.show();
-        dispose();
+        
         
     }//GEN-LAST:event_addUserBtnActionPerformed
 
@@ -256,7 +256,7 @@ public class Admin extends javax.swing.JFrame {
         // TODO add your handling code here:
         StockList stList= new StockList(); //new object of the adding the user
         stList.show();
-        dispose();
+        
         
     }//GEN-LAST:event_stockListBtnActionPerformed
 
@@ -265,7 +265,7 @@ public class Admin extends javax.swing.JFrame {
         
         StockSold stsold = new StockSold();
         stsold.show();
-        dispose();
+       
     }//GEN-LAST:event_soldStockbtnActionPerformed
 
     private void montlyBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_montlyBtnActionPerformed
@@ -280,7 +280,7 @@ public class Admin extends javax.swing.JFrame {
         
         captureStock cap = new captureStock();
         cap.show();
-        dispose();
+        
     }//GEN-LAST:event_addStockBtnActionPerformed
 
     private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutBtnActionPerformed
